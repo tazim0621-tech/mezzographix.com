@@ -1,0 +1,889 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mara Voss® — Graphic Designer & Art Director</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: { ink: '#0d0d0d', paper: '#f1eee7', lime: '#d7ff00', punch: '#ff4d00' },
+      fontFamily: {
+        display: ['Anton', 'sans-serif'],
+        body: ['"Space Grotesk"', 'sans-serif'],
+        mono: ['"Space Mono"', 'monospace'],
+      },
+    }
+  }
+}
+</script>
+
+<style>
+:root{ --ink:#0d0d0d; --paper:#f1eee7; --lime:#d7ff00; --punch:#ff4d00; --ease:cubic-bezier(.16,1,.3,1); }
+html{ scroll-behavior:smooth; }
+body{ overflow-x:hidden; -webkit-font-smoothing:antialiased; }
+body.loading{ overflow:hidden; }
+[id]{ scroll-margin-top:80px; }
+::selection{ background:var(--lime); color:var(--ink); }
+::-webkit-scrollbar{ width:10px; }
+::-webkit-scrollbar-track{ background:var(--ink); }
+::-webkit-scrollbar-thumb{ background:var(--lime); border:2px solid var(--ink); }
+
+/* ---------- film grain ---------- */
+.grain{ position:fixed; inset:-50%; width:200%; height:200%; pointer-events:none; z-index:104; opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 250 250'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain 8s steps(10) infinite; }
+@keyframes grain{ 0%,100%{transform:translate(0,0)} 20%{transform:translate(-4%,3%)} 40%{transform:translate(3%,-6%)} 60%{transform:translate(-6%,5%)} 80%{transform:translate(5%,4%)} }
+
+/* ---------- preloader ---------- */
+#loader{ transition:transform .9s cubic-bezier(.76,0,.24,1); }
+#loader.done{ transform:translateY(-100%); }
+#loadBar{ transition:width .15s linear; }
+
+/* ---------- hero entrance ---------- */
+.hero-mask{ display:block; overflow:hidden; padding-bottom:.06em; margin-bottom:-.06em; }
+.hero-char{ display:inline-block; transform:translateY(120%); transition:transform 1.1s var(--ease); will-change:transform; }
+.loaded .hero-char{ transform:translateY(0); }
+.hero-fade{ opacity:0; transform:translateY(24px); transition:opacity .9s var(--ease), transform .9s var(--ease); }
+.loaded .hero-fade{ opacity:1; transform:translateY(0); }
+
+.stroke-hero{ color:transparent; -webkit-text-stroke:2.5px var(--paper); transition:color .35s; }
+.stroke-hero:hover{ color:var(--paper); }
+@media(max-width:768px){ .stroke-hero{ -webkit-text-stroke:1.5px var(--paper); } }
+.stroke-footer{ -webkit-text-stroke:1px rgba(241,238,231,.35); color:transparent; }
+
+.scroll-line{ animation:drop 1.8s infinite; }
+@keyframes drop{ 0%{transform:scaleY(0);transform-origin:top} 45%{transform:scaleY(1);transform-origin:top} 55%{transform:scaleY(1);transform-origin:bottom} 100%{transform:scaleY(0);transform-origin:bottom} }
+
+/* ---------- marquees ---------- */
+.marquee{ display:flex; overflow:hidden; user-select:none; }
+.marquee-track{ display:flex; flex-shrink:0; align-items:center; min-width:100%; will-change:transform; animation:marq 26s linear infinite; }
+@keyframes marq{ to{ transform:translateX(-100%); } }
+.marquee-imgs .marquee-track{ animation-duration:46s; }
+.marquee-imgs:hover .marquee-track{ animation-play-state:paused; }
+
+/* ---------- scroll reveals ---------- */
+.rv{ opacity:0; transform:translateY(48px); transition:opacity 1s var(--ease), transform 1s var(--ease); }
+.rv.in{ opacity:1; transform:none; }
+
+/* ---------- about word-fill ---------- */
+.wf{ opacity:.12; transition:opacity .3s linear; }
+.wf.on{ opacity:1; }
+
+/* ---------- underline links ---------- */
+.u-link{ position:relative; }
+.u-link::after{ content:""; position:absolute; left:0; bottom:-3px; height:2px; width:100%; background:currentColor; transform:scaleX(0); transform-origin:right; transition:transform .45s var(--ease); }
+.u-link:hover::after{ transform:scaleX(1); transform-origin:left; }
+
+/* ---------- pill buttons ---------- */
+.btn{ position:relative; overflow:hidden; border:2px solid currentColor; border-radius:999px; transition:color .35s, border-color .35s; display:inline-block; }
+.btn > *{ position:relative; z-index:1; }
+.btn::before{ content:""; position:absolute; inset:0; background:var(--lime); border-radius:999px; transform:translateY(101%); transition:transform .45s var(--ease); }
+.btn:hover{ color:var(--ink); border-color:var(--lime); }
+.btn:hover::before{ transform:translateY(0); }
+
+/* ---------- custom cursor ---------- */
+#cursor{ position:fixed; top:0; left:0; width:14px; height:14px; background:#fff; border-radius:999px; pointer-events:none; z-index:120;
+  mix-blend-mode:difference; display:flex; align-items:center; justify-content:center; opacity:0;
+  transition:width .35s var(--ease), height .35s var(--ease), background-color .35s, opacity .3s; }
+#cursor.on{ opacity:1; }
+#cursor span{ font:700 10px/1 'Space Mono', monospace; color:var(--ink); opacity:0; transition:opacity .2s; }
+#cursor.grow{ width:52px; height:52px; }
+#cursor.view{ width:88px; height:88px; mix-blend-mode:normal; background:var(--lime); }
+#cursor.view span{ opacity:1; }
+@media(pointer:fine){ *{ cursor:none !important; } }
+@media(pointer:coarse){ #cursor{ display:none; } }
+
+/* ---------- floating work preview ---------- */
+#preview{ position:fixed; top:0; left:0; width:min(26rem,34vw); aspect-ratio:4/3; z-index:40; pointer-events:none; opacity:0;
+  overflow:hidden; border:2px solid var(--paper); transition:opacity .3s ease; will-change:transform; }
+#preview img{ width:100%; height:100%; object-fit:cover; }
+
+/* ---------- grayscale -> color images ---------- */
+.img-g{ filter:grayscale(1) contrast(1.06); transition:filter .5s ease, transform .6s var(--ease); }
+.group:hover .img-g, .img-g:hover{ filter:grayscale(0) contrast(1); }
+
+/* ---------- services accordion ---------- */
+.svc-body{ display:grid; grid-template-rows:0fr; transition:grid-template-rows .55s var(--ease); }
+.svc.open .svc-body{ grid-template-rows:1fr; }
+.svc-body > div{ overflow:hidden; }
+.svc .plus{ transition:transform .4s var(--ease); }
+.svc.open .plus{ transform:rotate(45deg); }
+
+/* ---------- rotating badge ---------- */
+.spin-slow{ animation:spin 14s linear infinite; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+
+/* ---------- mobile menu ---------- */
+#menu{ transition:transform .7s var(--ease); }
+#menu.open{ transform:translateY(0); }
+#menu .m-link{ transform:translateY(110%); transition:transform .6s var(--ease); }
+#menu.open .m-link{ transform:none; }
+#menu.open .m-mask:nth-child(1) .m-link{ transition-delay:.15s; }
+#menu.open .m-mask:nth-child(2) .m-link{ transition-delay:.22s; }
+#menu.open .m-mask:nth-child(3) .m-link{ transition-delay:.29s; }
+#menu.open .m-mask:nth-child(4) .m-link{ transition-delay:.36s; }
+#menu.open .m-mask:nth-child(5) .m-link{ transition-delay:.43s; }
+
+/* ---------- lightbox ---------- */
+#lightbox{ opacity:0; pointer-events:none; transition:opacity .4s ease; }
+#lightbox.open{ opacity:1; pointer-events:auto; }
+#lb-card{ transform:translateY(36px) scale(.97); transition:transform .55s var(--ease); }
+#lightbox.open #lb-card{ transform:none; }
+
+/* ---------- magnetic ---------- */
+.magnetic{ transition:transform .35s var(--ease); display:inline-block; }
+
+/* ---------- toast ---------- */
+#toast{ position:fixed; left:50%; bottom:2rem; transform:translate(-50%,180%); transition:transform .5s var(--ease); z-index:96; }
+
+@media (prefers-reduced-motion: reduce){
+  .marquee-track, .spin-slow, .grain, .scroll-line{ animation:none !important; }
+}
+</style>
+</head>
+
+<body class="bg-paper text-ink font-body antialiased loading">
+
+<!-- custom cursor -->
+<div id="cursor"><span>VIEW</span></div>
+
+<!-- film grain -->
+<div class="grain" aria-hidden="true"></div>
+
+<!-- ============ PRELOADER ============ -->
+<div id="loader" class="fixed inset-0 z-[100] bg-ink text-paper flex flex-col justify-between p-5 md:p-10">
+  <div class="flex justify-between font-mono text-[10px] md:text-xs tracking-[0.2em] text-white/50">
+    <span>MARA VOSS®</span><span>PORTFOLIO — 2025</span>
+  </div>
+  <div class="flex items-end justify-between gap-6">
+    <p class="hidden md:block font-mono text-xs text-white/40 leading-relaxed mb-5">LOADING<br>LOUD<br>GRAPHICS</p>
+    <div id="loadNum" class="font-display leading-none text-[clamp(5rem,22vw,17rem)]">0<span class="text-lime">%</span></div>
+  </div>
+  <div class="h-1 bg-white/10"><div id="loadBar" class="h-full bg-lime w-0"></div></div>
+</div>
+
+<!-- ============ NAV (blend-difference: auto inverts over dark/light sections) ============ -->
+<header class="fixed top-0 inset-x-0 z-50 mix-blend-difference text-white">
+  <nav class="flex items-center justify-between px-5 md:px-10 py-5">
+    <a href="#top" data-hover class="font-display uppercase text-lg md:text-xl tracking-wide">Mara Voss<sup class="font-mono text-[9px]">®</sup></a>
+    <div class="hidden md:flex items-center gap-8 font-mono text-xs tracking-[0.15em]">
+      <a href="#work" class="u-link" data-hover>WORK</a>
+      <a href="#about" class="u-link" data-hover>ABOUT</a>
+      <a href="#services" class="u-link" data-hover>SERVICES</a>
+      <a href="#contact" class="u-link" data-hover>CONTACT</a>
+      <span class="flex items-center gap-2 opacity-70"><span class="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>OPEN FOR WORK</span>
+    </div>
+    <button id="menuBtn" data-hover class="md:hidden font-mono text-xs tracking-[0.2em]">MENU&nbsp;+</button>
+  </nav>
+</header>
+
+<!-- ============ MOBILE MENU ============ -->
+<div id="menu" class="fixed inset-0 z-[80] bg-ink text-paper translate-y-full flex flex-col px-5 pt-5 pb-8">
+  <div class="flex items-center justify-between">
+    <span class="font-display uppercase text-lg">Mara Voss<sup class="font-mono text-[9px]">®</sup></span>
+    <button id="menuClose" data-hover class="font-mono text-xs tracking-[0.2em] text-white/70">CLOSE ✕</button>
+  </div>
+  <nav class="flex-1 flex flex-col justify-center">
+    <div class="m-mask overflow-hidden border-b border-white/10"><a href="#work" class="m-link menu-link flex items-baseline gap-4 py-4 font-display uppercase text-5xl sm:text-6xl hover:text-lime transition-colors" data-hover><span class="font-mono text-xs text-punch">01</span>Work</a></div>
+    <div class="m-mask overflow-hidden border-b border-white/10"><a href="#about" class="m-link menu-link flex items-baseline gap-4 py-4 font-display uppercase text-5xl sm:text-6xl hover:text-lime transition-colors" data-hover><span class="font-mono text-xs text-punch">02</span>About</a></div>
+    <div class="m-mask overflow-hidden border-b border-white/10"><a href="#services" class="m-link menu-link flex items-baseline gap-4 py-4 font-display uppercase text-5xl sm:text-6xl hover:text-lime transition-colors" data-hover><span class="font-mono text-xs text-punch">03</span>Services</a></div>
+    <div class="m-mask overflow-hidden border-b border-white/10"><a href="#playground" class="m-link menu-link flex items-baseline gap-4 py-4 font-display uppercase text-5xl sm:text-6xl hover:text-lime transition-colors" data-hover><span class="font-mono text-xs text-punch">04</span>Playground</a></div>
+    <div class="m-mask overflow-hidden"><a href="#contact" class="m-link menu-link flex items-baseline gap-4 py-4 font-display uppercase text-5xl sm:text-6xl hover:text-lime transition-colors" data-hover><span class="font-mono text-xs text-punch">05</span>Contact</a></div>
+  </nav>
+  <div class="flex justify-between font-mono text-[10px] tracking-widest text-white/50">
+    <span>HELLO@MARAVOSS.STUDIO</span><span>BERLIN — ©2025</span>
+  </div>
+</div>
+
+<!-- ============ CASE LIGHTBOX ============ -->
+<div id="lightbox" class="fixed inset-0 z-[85] flex items-center justify-center p-4 md:p-10">
+  <div class="absolute inset-0 bg-ink/90 backdrop-blur-sm" data-close></div>
+  <figure id="lb-card" class="relative w-full max-w-4xl bg-ink text-paper border-2 border-white/20">
+    <img id="lbImg" src="" alt="Project case" class="w-full aspect-[4/3] object-cover">
+    <figcaption class="flex items-start justify-between gap-6 p-5 md:p-8">
+      <div>
+        <h3 id="lbTitle" class="font-display uppercase text-3xl md:text-5xl leading-none">Title</h3>
+        <p id="lbMeta" class="mt-3 font-mono text-[10px] md:text-xs tracking-[0.2em] text-lime">META</p>
+        <p id="lbDesc" class="mt-4 text-sm md:text-base text-white/70 leading-relaxed max-w-xl">Description</p>
+      </div>
+      <button data-close class="shrink-0 w-11 h-11 border-2 border-white/30 rounded-full flex items-center justify-center hover:bg-lime hover:text-ink hover:border-lime hover:rotate-90 transition-all duration-300" data-hover>
+        <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </figcaption>
+  </figure>
+</div>
+
+<!-- floating hover preview for work list -->
+<div id="preview"><img id="previewImg" src="" alt=""></div>
+
+<!-- toast -->
+<div id="toast" class="bg-lime text-ink font-mono text-xs tracking-[0.15em] px-6 py-3 rounded-full border-2 border-ink shadow-xl">EMAIL COPIED — TALK SOON ✦</div>
+
+<!-- ============ HERO ============ -->
+<section id="top" class="relative min-h-screen bg-ink text-paper flex flex-col px-5 md:px-10 pt-24 md:pt-28 pb-6 overflow-hidden">
+  <!-- structural hairlines -->
+  <div class="pointer-events-none absolute inset-0 hidden md:grid grid-cols-4" aria-hidden="true">
+    <div class="border-l border-white/10"></div><div class="border-l border-white/10"></div><div class="border-l border-white/10"></div><div class="border-l border-white/10"></div>
+  </div>
+
+  <!-- meta strip -->
+  <div class="relative flex flex-wrap items-center justify-between gap-3 font-mono text-[10px] md:text-xs tracking-[0.18em] text-white/60 hero-fade" style="transition-delay:.25s">
+    <span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-lime animate-pulse"></span>AVAILABLE FOR FREELANCE</span>
+    <span class="hidden md:inline">BERLIN, DE — 52.52°N / 13.40°E</span>
+    <span>PORTFOLIO ©2025</span>
+  </div>
+
+  <!-- giant headline -->
+  <div class="relative flex-1 flex flex-col justify-center py-10 md:py-6">
+    <h1 class="font-display uppercase leading-[0.83] tracking-[-0.01em]">
+      <span class="hero-mask"><span data-split class="block text-[clamp(4.2rem,24vw,23rem)]">Mara</span></span>
+      <span class="hero-mask flex items-center gap-[0.14em]">
+        <span data-split class="block text-[clamp(4.2rem,24vw,23rem)] stroke-hero">Voss</span>
+        <span class="hero-fade hidden sm:inline-block h-[0.6em] w-[1.5em] max-w-[1.6em] rounded-full overflow-hidden border-2 border-white/25 shrink-0" style="transition-delay:.8s">
+          <img src="https://picsum.photos/seed/marahero/600/400?grayscale" class="w-full h-full object-cover" alt="Mara Voss portrait">
+        </span>
+        <sup class="hero-fade font-body font-bold text-[0.16em] tracking-normal self-start mt-[0.32em] text-white/70" style="transition-delay:.9s">®</sup>
+      </span>
+    </h1>
+  </div>
+
+  <!-- bottom row -->
+  <div class="relative flex flex-wrap items-end justify-between gap-8">
+    <p class="hero-fade max-w-sm text-base md:text-lg text-white/70 leading-relaxed" style="transition-delay:1s">
+      Graphic designer & art director crafting <span class="text-lime font-semibold">loud identities</span> and precise visual systems for brands that refuse to blend in.
+    </p>
+
+    <!-- rotating badge -->
+    <div class="hero-fade hidden md:block magnetic" style="transition-delay:1.1s" data-hover>
+      <div class="relative w-32 h-32">
+        <svg viewBox="0 0 100 100" class="w-full h-full spin-slow">
+          <defs><path id="circ" d="M50 50 m -37 0 a 37 37 0 1 1 74 0 a 37 37 0 1 1 -74 0"/></defs>
+          <text font-size="8" letter-spacing="2" font-family="Space Mono, monospace" fill="#f1eee7" opacity=".85">
+            <textPath href="#circ">AVAILABLE FOR WORK • LET'S TALK •</textPath>
+          </text>
+        </svg>
+        <div class="absolute inset-0 flex items-center justify-center">
+          <svg viewBox="0 0 24 24" class="w-5 h-5 text-lime" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v16m0 0l-6-6m6 6l6-6"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <a href="#work" data-hover class="btn magnetic px-8 py-4 font-mono text-xs md:text-sm tracking-[0.2em] hero-fade" style="transition-delay:1.2s">
+      <span class="flex items-center gap-3">SEE MY WORK
+        <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v16m0 0l-6-6m6 6l6-6"/></svg>
+      </span>
+    </a>
+  </div>
+
+  <!-- scroll hint -->
+  <div class="absolute bottom-6 left-1/2 -translate-x-1/2 hidden lg:flex flex-col items-center gap-2">
+    <span class="font-mono text-[9px] tracking-[0.3em] text-white/40">(SCROLL)</span>
+    <span class="scroll-line block w-px h-10 bg-white/40"></span>
+  </div>
+</section>
+
+<!-- ============ LIME MARQUEE ============ -->
+<div class="relative bg-lime text-ink border-y-[3px] border-ink overflow-hidden marquee py-3 md:py-4 select-none">
+  <div class="marquee-track gap-6 md:gap-10 pr-6 md:pr-10">
+    <span class="font-display uppercase text-2xl md:text-4xl whitespace-nowrap">Brand Identity</span><span class="font-mono text-lg md:text-2xl">✦</span>
+    <span class="font-display uppercase text-2xl md:text-4xl whitespace-nowrap">Art Direction</span><span class="font-mono text-lg md:text-2xl">✦</span>
+    <span class="font-display uppercase text-2xl md:text-4xl whitespace-nowrap">Editorial Design</span><span class="font-mono text-lg md:text-2xl">✦</span>
+    <span class="font-display uppercase text-2xl md:text-4xl whitespace-nowrap">Type Design</span><span class="font-mono text-lg md:text-2xl">✦</span>
+    <span class="font-display uppercase text-2xl md:text-4xl whitespace-nowrap">Packaging</span><span class="font-mono text-lg md:text-2xl">✦</span>
+    <span class="font-display uppercase text-2xl md:text-4xl whitespace-nowrap">Motion</span><span class="font-mono text-lg md:text-2xl">✦</span>
+    <span class="font-display uppercase text-2xl md:text-4xl whitespace-nowrap">Visual Systems</span><span class="font-mono text-lg md:text-2xl">✦</span>
+    <span class="font-display uppercase text-2xl md:text-4xl whitespace-nowrap">Campaigns</span><span class="font-mono text-lg md:text-2xl">✦</span>
+  </div>
+  <div class="marquee-track gap-6 md:gap-10 pr-6 md:pr-10" aria-hidden="true">
+    <span class="font-display uppercase text-2xl md:text-4xl whitespace-nowrap">Brand Identity</span><span class="font-mono text-lg md:text-2xl">✦</span>
+    <span class="font-display uppercase text-2xl md:text-4xl whitespace-nowrap">Art Direction</span><span class="font-mono text-lg md:text-2xl">✦</span>
+    <span class="font-display uppercase text-2xl md:text-4xl whitespace-nowrap">Editorial Design</span><span class="font-mono text-lg md:text-2xl">✦</span>
+    <span class="font-display uppercase text-2xl md:text-4xl whitespace-nowrap">Type Design</span><span class="font-mono text-lg md:text-2xl">✦</span>
+    <span class="font-display uppercase text-2xl md:text-4xl whitespace-nowrap">Packaging</span><span class="font-mono text-lg md:text-2xl">✦</span>
+    <span class="font-display uppercase text-2xl md:text-4xl whitespace-nowrap">Motion</span><span class="font-mono text-lg md:text-2xl">✦</span>
+    <span class="font-display uppercase text-2xl md:text-4xl whitespace-nowrap">Visual Systems</span><span class="font-mono text-lg md:text-2xl">✦</span>
+    <span class="font-display uppercase text-2xl md:text-4xl whitespace-nowrap">Campaigns</span><span class="font-mono text-lg md:text-2xl">✦</span>
+  </div>
+</div>
+
+<!-- ============ ABOUT ============ -->
+<section id="about" class="bg-paper text-ink px-5 md:px-10 py-24 md:py-36">
+  <div class="flex items-center gap-3 font-mono text-[10px] md:text-xs tracking-[0.25em] rv">
+    <span class="w-2.5 h-2.5 bg-lime border-2 border-ink inline-block"></span>ABOUT ME — 01
+  </div>
+
+  <p id="fillPara" class="mt-10 md:mt-14 font-display uppercase text-[clamp(1.55rem,4.2vw,3.9rem)] leading-[1.1] max-w-6xl">
+    I'm Mara — a Berlin-based graphic designer obsessed with contrast, rhythm and type. For eight years I've turned rough ideas into bold identities that make brands impossible to ignore — from startup logos to full editorial systems.
+  </p>
+
+  <div class="mt-16 md:mt-24 grid md:grid-cols-12 gap-10 md:gap-12 items-start">
+    <!-- portrait -->
+    <figure class="md:col-span-4 rv">
+      <div class="group relative">
+        <div class="absolute inset-0 translate-x-3 translate-y-3 bg-lime border-2 border-ink"></div>
+        <img src="https://picsum.photos/seed/maraportrait/700/933?grayscale" alt="Portrait of Mara Voss in her studio" class="img-g relative w-full aspect-[3/4] object-cover border-2 border-ink">
+      </div>
+      <figcaption class="mt-5 flex justify-between font-mono text-[10px] tracking-widest text-ink/50">
+        <span>MARA VOSS — STUDIO, BERLIN</span><span>FIG. 01</span>
+      </figcaption>
+    </figure>
+
+    <!-- approach -->
+    <div class="md:col-span-4 rv" style="transition-delay:.12s">
+      <h3 class="font-display uppercase text-3xl md:text-4xl leading-tight">The<br>Approach<span class="text-punch">.</span></h3>
+      <p class="mt-6 text-ink/70 leading-relaxed">Every project starts with one question: <em>what does this brand refuse to compromise on?</em> The answer becomes the spine of the whole visual system — the thing we protect when everything else is up for debate.</p>
+      <p class="mt-4 text-ink/70 leading-relaxed">I work hands-on with founders, studios and cultural institutions. Small teams, direct lines, zero account-manager fog. Big type, sharp grids, no decoration without a reason.</p>
+      <div class="mt-8 flex items-center gap-3 font-mono text-xs">
+        <span class="w-2 h-2 bg-punch inline-block"></span>
+        <span class="tracking-[0.2em]">FLUENT IN: EN / DE / VISUAL NOISE</span>
+      </div>
+    </div>
+
+    <!-- stats -->
+    <div class="md:col-span-4 grid grid-cols-2 gap-px bg-ink border-2 border-ink rv" style="transition-delay:.22s">
+      <div class="bg-paper p-6 md:p-7">
+        <div class="stat-num font-display text-5xl md:text-6xl leading-none" data-count="8">0</div>
+        <div class="font-mono text-[10px] tracking-widest text-ink/50 mt-3">YEARS OF EXPERIENCE</div>
+      </div>
+      <div class="bg-paper p-6 md:p-7">
+        <div class="stat-num font-display text-5xl md:text-6xl leading-none text-punch" data-count="120" data-suffix="+">0</div>
+        <div class="font-mono text-[10px] tracking-widest text-ink/50 mt-3">PROJECTS SHIPPED</div>
+      </div>
+      <div class="bg-paper p-6 md:p-7">
+        <div class="stat-num font-display text-5xl md:text-6xl leading-none" data-count="14">0</div>
+        <div class="font-mono text-[10px] tracking-widest text-ink/50 mt-3">INTERNATIONAL AWARDS</div>
+      </div>
+      <div class="bg-paper p-6 md:p-7">
+        <div class="stat-num font-display text-5xl md:text-6xl leading-none text-punch" data-count="40" data-suffix="+">0</div>
+        <div class="font-mono text-[10px] tracking-widest text-ink/50 mt-3">HAPPY CLIENTS</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SELECTED WORKS ============ -->
+<section id="work" class="bg-ink text-paper px-5 md:px-10 py-24 md:py-36">
+  <div class="flex items-center gap-3 font-mono text-[10px] md:text-xs tracking-[0.25em] rv">
+    <span class="w-2.5 h-2.5 bg-lime inline-block"></span>SELECTED WORKS — 02
+  </div>
+
+  <div class="mt-8 flex flex-wrap items-end justify-between gap-6 rv" style="transition-delay:.1s">
+    <h2 class="font-display uppercase leading-[0.85] text-[clamp(3.4rem,11vw,10.5rem)]">Selected<br><span class="stroke-hero">Works</span></h2>
+    <span class="font-mono text-xs text-paper/50 leading-relaxed text-right">(2022 — 2025)<br>06 PROJECTS</span>
+  </div>
+
+  <div class="mt-14 md:mt-20 border-b border-white/15">
+
+    <a href="#" data-index="0" data-hover class="work-row group block border-t border-white/15 px-2 md:px-4 py-6 md:py-3 transition-colors duration-300 hover:bg-lime">
+      <div class="md:grid md:grid-cols-[2.5rem_1fr_auto_3rem] md:items-center md:gap-8">
+        <span class="font-mono text-xs text-white/40 group-hover:text-ink/60 transition-colors hidden md:block">01</span>
+        <div class="md:flex md:items-center md:gap-8">
+          <div class="md:hidden w-full aspect-[16/9] overflow-hidden mb-4 border border-white/15">
+            <img src="https://picsum.photos/seed/noirstudio/800/450?grayscale" alt="Noir Studio project" class="img-g w-full h-full object-cover">
+          </div>
+          <h3 class="font-display uppercase leading-none text-[clamp(2rem,6.5vw,5.5rem)] group-hover:text-ink group-hover:translate-x-2 md:group-hover:translate-x-6 transition-all duration-300">Noir Studio</h3>
+        </div>
+        <div class="mt-2 md:mt-0 font-mono text-[11px] md:text-xs text-white/50 group-hover:text-ink/70 transition-colors md:text-right leading-relaxed">BRAND IDENTITY<br><span class="text-white/30 group-hover:text-ink/50">2025</span></div>
+        <svg viewBox="0 0 24 24" class="hidden md:block w-7 h-7 text-white/40 group-hover:text-ink group-hover:rotate-45 transition-all duration-300 justify-self-end" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M8 7h9v9"/></svg>
+      </div>
+    </a>
+
+    <a href="#" data-index="1" data-hover class="work-row group block border-t border-white/15 px-2 md:px-4 py-6 md:py-3 transition-colors duration-300 hover:bg-lime">
+      <div class="md:grid md:grid-cols-[2.5rem_1fr_auto_3rem] md:items-center md:gap-8">
+        <span class="font-mono text-xs text-white/40 group-hover:text-ink/60 transition-colors hidden md:block">02</span>
+        <div class="md:flex md:items-center md:gap-8">
+          <div class="md:hidden w-full aspect-[16/9] overflow-hidden mb-4 border border-white/15">
+            <img src="https://picsum.photos/seed/pulsefest/800/450?grayscale" alt="Pulse Festival project" class="img-g w-full h-full object-cover">
+          </div>
+          <h3 class="font-display uppercase leading-none text-[clamp(2rem,6.5vw,5.5rem)] group-hover:text-ink group-hover:translate-x-2 md:group-hover:translate-x-6 transition-all duration-300">Pulse Festival</h3>
+        </div>
+        <div class="mt-2 md:mt-0 font-mono text-[11px] md:text-xs text-white/50 group-hover:text-ink/70 transition-colors md:text-right leading-relaxed">ART DIRECTION<br><span class="text-white/30 group-hover:text-ink/50">2024</span></div>
+        <svg viewBox="0 0 24 24" class="hidden md:block w-7 h-7 text-white/40 group-hover:text-ink group-hover:rotate-45 transition-all duration-300 justify-self-end" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M8 7h9v9"/></svg>
+      </div>
+    </a>
+
+    <a href="#" data-index="2" data-hover class="work-row group block border-t border-white/15 px-2 md:px-4 py-6 md:py-3 transition-colors duration-300 hover:bg-lime">
+      <div class="md:grid md:grid-cols-[2.5rem_1fr_auto_3rem] md:items-center md:gap-8">
+        <span class="font-mono text-xs text-white/40 group-hover:text-ink/60 transition-colors hidden md:block">03</span>
+        <div class="md:flex md:items-center md:gap-8">
+          <div class="md:hidden w-full aspect-[16/9] overflow-hidden mb-4 border border-white/15">
+            <img src="https://picsum.photos/seed/kioskmag/800/450?grayscale" alt="Kiosk Magazine project" class="img-g w-full h-full object-cover">
+          </div>
+          <h3 class="font-display uppercase leading-none text-[clamp(2rem,6.5vw,5.5rem)] group-hover:text-ink group-hover:translate-x-2 md:group-hover:translate-x-6 transition-all duration-300">Kiosk Magazine</h3>
+        </div>
+        <div class="mt-2 md:mt-0 font-mono text-[11px] md:text-xs text-white/50 group-hover:text-ink/70 transition-colors md:text-right leading-relaxed">EDITORIAL DESIGN<br><span class="text-white/30 group-hover:text-ink/50">2024</span></div>
+        <svg viewBox="0 0 24 24" class="hidden md:block w-7 h-7 text-white/40 group-hover:text-ink group-hover:rotate-45 transition-all duration-300 justify-self-end" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M8 7h9v9"/></svg>
+      </div>
+    </a>
+
+    <a href="#" data-index="3" data-hover class="work-row group block border-t border-white/15 px-2 md:px-4 py-6 md:py-3 transition-colors duration-300 hover:bg-lime">
+      <div class="md:grid md:grid-cols-[2.5rem_1fr_auto_3rem] md:items-center md:gap-8">
+        <span class="font-mono text-xs text-white/40 group-hover:text-ink/60 transition-colors hidden md:block">04</span>
+        <div class="md:flex md:items-center md:gap-8">
+          <div class="md:hidden w-full aspect-[16/9] overflow-hidden mb-4 border border-white/15">
+            <img src="https://picsum.photos/seed/voltespresso/800/450?grayscale" alt="Volt Espresso project" class="img-g w-full h-full object-cover">
+          </div>
+          <h3 class="font-display uppercase leading-none text-[clamp(2rem,6.5vw,5.5rem)] group-hover:text-ink group-hover:translate-x-2 md:group-hover:translate-x-6 transition-all duration-300">Volt Espresso</h3>
+        </div>
+        <div class="mt-2 md:mt-0 font-mono text-[11px] md:text-xs text-white/50 group-hover:text-ink/70 transition-colors md:text-right leading-relaxed">PACKAGING<br><span class="text-white/30 group-hover:text-ink/50">2023</span></div>
+        <svg viewBox="0 0 24 24" class="hidden md:block w-7 h-7 text-white/40 group-hover:text-ink group-hover:rotate-45 transition-all duration-300 justify-self-end" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M8 7h9v9"/></svg>
+      </div>
+    </a>
+
+    <a href="#" data-index="4" data-hover class="work-row group block border-t border-white/15 px-2 md:px-4 py-6 md:py-3 transition-colors duration-300 hover:bg-lime">
+      <div class="md:grid md:grid-cols-[2.5rem_1fr_auto_3rem] md:items-center md:gap-8">
+        <span class="font-mono text-xs text-white/40 group-hover:text-ink/60 transition-colors hidden md:block">05</span>
+        <div class="md:flex md:items-center md:gap-8">
+          <div class="md:hidden w-full aspect-[16/9] overflow-hidden mb-4 border border-white/15">
+            <img src="https://picsum.photos/seed/atlastype/800/450?grayscale" alt="Atlas Type Co. project" class="img-g w-full h-full object-cover">
+          </div>
+          <h3 class="font-display uppercase leading-none text-[clamp(2rem,6.5vw,5.5rem)] group-hover:text-ink group-hover:translate-x-2 md:group-hover:translate-x-6 transition-all duration-300">Atlas Type Co.</h3>
+        </div>
+        <div class="mt-2 md:mt-0 font-mono text-[11px] md:text-xs text-white/50 group-hover:text-ink/70 transition-colors md:text-right leading-relaxed">TYPE DESIGN<br><span class="text-white/30 group-hover:text-ink/50">2023</span></div>
+        <svg viewBox="0 0 24 24" class="hidden md:block w-7 h-7 text-white/40 group-hover:text-ink group-hover:rotate-45 transition-all duration-300 justify-self-end" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M8 7h9v9"/></svg>
+      </div>
+    </a>
+
+    <a href="#" data-index="5" data-hover class="work-row group block border-t border-white/15 px-2 md:px-4 py-6 md:py-3 transition-colors duration-300 hover:bg-lime">
+      <div class="md:grid md:grid-cols-[2.5rem_1fr_auto_3rem] md:items-center md:gap-8">
+        <span class="font-mono text-xs text-white/40 group-hover:text-ink/60 transition-colors hidden md:block">06</span>
+        <div class="md:flex md:items-center md:gap-8">
+          <div class="md:hidden w-full aspect-[16/9] overflow-hidden mb-4 border border-white/15">
+            <img src="https://picsum.photos/seed/monosupply/800/450?grayscale" alt="Mono Supply project" class="img-g w-full h-full object-cover">
+          </div>
+          <h3 class="font-display uppercase leading-none text-[clamp(2rem,6.5vw,5.5rem)] group-hover:text-ink group-hover:translate-x-2 md:group-hover:translate-x-6 transition-all duration-300">Mono Supply</h3>
+        </div>
+        <div class="mt-2 md:mt-0 font-mono text-[11px] md:text-xs text-white/50 group-hover:text-ink/70 transition-colors md:text-right leading-relaxed">BRANDING / E-COMM<br><span class="text-white/30 group-hover:text-ink/50">2022</span></div>
+        <svg viewBox="0 0 24 24" class="hidden md:block w-7 h-7 text-white/40 group-hover:text-ink group-hover:rotate-45 transition-all duration-300 justify-self-end" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M8 7h9v9"/></svg>
+      </div>
+    </a>
+
+  </div>
+
+  <p class="mt-6 font-mono text-[10px] tracking-[0.25em] text-white/40 rv">(CLICK A PROJECT TO OPEN THE CASE)</p>
+</section>
+
+<!-- ============ SERVICES ============ -->
+<section id="services" class="bg-paper text-ink px-5 md:px-10 py-24 md:py-36">
+  <div class="flex items-center gap-3 font-mono text-[10px] md:text-xs tracking-[0.25em] rv">
+    <span class="w-2.5 h-2.5 bg-punch inline-block"></span>WHAT I DO — 03
+  </div>
+  <div class="mt-8 flex flex-wrap items-end justify-between gap-6 rv" style="transition-delay:.1s">
+    <h2 class="font-display uppercase leading-[0.85] text-[clamp(3.4rem,11vw,10.5rem)]">Services</h2>
+    <span class="font-mono text-xs text-ink/50 leading-relaxed text-right">(CAPABILITIES)<br>04 AREAS</span>
+  </div>
+
+  <div class="mt-14 md:mt-20">
+
+    <div class="svc open border-t-2 border-ink">
+      <button class="head group flex w-full items-center justify-between gap-6 py-7 md:py-9 text-left" data-hover>
+        <div class="flex items-baseline gap-4 md:gap-8">
+          <span class="font-mono text-xs md:text-sm text-punch">01</span>
+          <span class="font-display uppercase text-[clamp(1.8rem,5.5vw,4.5rem)] leading-none group-hover:translate-x-2 transition-transform duration-300">Brand Identity</span>
+        </div>
+        <span class="plus shrink-0 w-10 h-10 md:w-12 md:h-12 border-2 border-ink rounded-full flex items-center justify-center">
+          <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        </span>
+      </button>
+      <div class="svc-body"><div>
+        <div class="pb-9 md:pb-12 md:pl-16 grid md:grid-cols-2 gap-6">
+          <p class="text-ink/70 leading-relaxed max-w-md">Naming, logo systems and full visual languages. I build brands with a spine — coherent, flexible and unmistakably yours. From the first sketch to a guideline document nobody will ignore.</p>
+          <ul class="flex flex-wrap gap-2 content-start md:justify-end">
+            <li class="font-mono text-[10px] tracking-widest border-2 border-ink rounded-full px-4 py-1.5 hover:bg-ink hover:text-paper transition-colors">STRATEGY</li>
+            <li class="font-mono text-[10px] tracking-widest border-2 border-ink rounded-full px-4 py-1.5 hover:bg-ink hover:text-paper transition-colors">LOGO SYSTEMS</li>
+            <li class="font-mono text-[10px] tracking-widest border-2 border-ink rounded-full px-4 py-1.5 hover:bg-ink hover:text-paper transition-colors">GUIDELINES</li>
+            <li class="font-mono text-[10px] tracking-widest border-2 border-ink rounded-full px-4 py-1.5 hover:bg-ink hover:text-paper transition-colors">NAMING</li>
+            <li class="font-mono text-[10px] tracking-widest border-2 border-ink rounded-full px-4 py-1.5 hover:bg-ink hover:text-paper transition-colors">REBRANDING</li>
+          </ul>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="svc border-t-2 border-ink">
+      <button class="head group flex w-full items-center justify-between gap-6 py-7 md:py-9 text-left" data-hover>
+        <div class="flex items-baseline gap-4 md:gap-8">
+          <span class="font-mono text-xs md:text-sm text-punch">02</span>
+          <span class="font-display uppercase text-[clamp(1.8rem,5.5vw,4.5rem)] leading-none group-hover:translate-x-2 transition-transform duration-300">Editorial & Print</span>
+        </div>
+        <span class="plus shrink-0 w-10 h-10 md:w-12 md:h-12 border-2 border-ink rounded-full flex items-center justify-center">
+          <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        </span>
+      </button>
+      <div class="svc-body"><div>
+        <div class="pb-9 md:pb-12 md:pl-16 grid md:grid-cols-2 gap-6">
+          <p class="text-ink/70 leading-relaxed max-w-md">Magazines, books, posters and annual reports. Grids that breathe and typography that speaks — print isn't dead, it's just been under art-directed.</p>
+          <ul class="flex flex-wrap gap-2 content-start md:justify-end">
+            <li class="font-mono text-[10px] tracking-widest border-2 border-ink rounded-full px-4 py-1.5 hover:bg-ink hover:text-paper transition-colors">MAGAZINES</li>
+            <li class="font-mono text-[10px] tracking-widest border-2 border-ink rounded-full px-4 py-1.5 hover:bg-ink hover:text-paper transition-colors">BOOKS</li>
+            <li class="font-mono text-[10px] tracking-widest border-2 border-ink rounded-full px-4 py-1.5 hover:bg-ink hover:text-paper transition-colors">POSTERS</li>
+            <li class="font-mono text-[10px] tracking-widest border-2 border-ink rounded-full px-4 py-1.5 hover:bg-ink hover:text-paper transition-colors">REPORTS</li>
+          </ul>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="svc border-t-2 border-ink">
+      <button class="head group flex w-full items-center justify-between gap-6 py-7 md:py-9 text-left" data-hover>
+        <div class="flex items-baseline gap-4 md:gap-8">
+          <span class="font-mono text-xs md:text-sm text-punch">03</span>
+          <span class="font-display uppercase text-[clamp(1.8rem,5.5vw,4.5rem)] leading-none group-hover:translate-x-2 transition-transform duration-300">Type & Lettering</span>
+        </div>
+        <span class="plus shrink-0 w-10 h-10 md:w-12 md:h-12 border-2 border-ink rounded-full flex items-center justify-center">
+          <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        </span>
+      </button>
+      <div class="svc-body"><div>
+        <div class="pb-9 md:pb-12 md:pl-16 grid md:grid-cols-2 gap-6">
+          <p class="text-ink/70 leading-relaxed max-w-md">Custom logotypes and display faces drawn from scratch. Because your brand shouldn't rent its voice from a font menu.</p>
+          <ul class="flex flex-wrap gap-2 content-start md:justify-end">
+            <li class="font-mono text-[10px] tracking-widest border-2 border-ink rounded-full px-4 py-1.5 hover:bg-ink hover:text-paper transition-colors">LOGOTYPES</li>
+            <li class="font-mono text-[10px] tracking-widest border-2 border-ink rounded-full px-4 py-1.5 hover:bg-ink hover:text-paper transition-colors">DISPLAY FACES</li>
+            <li class="font-mono text-[10px] tracking-widest border-2 border-ink rounded-full px-4 py-1.5 hover:bg-ink hover:text-paper transition-colors">LETTERING</li>
+            <li class="font-mono text-[10px] tracking-widest border-2 border-ink rounded-full px-4 py-1.5 hover:bg-ink hover:text-paper transition-colors">VARIABLE FONTS</li>
+          </ul>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="svc border-t-2 border-b-2 border-ink">
+      <button class="head group flex w-full items-center justify-between gap-6 py-7 md:py-9 text-left" data-hover>
+        <div class="flex items-baseline gap-4 md:gap-8">
+          <span class="font-mono text-xs md:text-sm text-punch">04</span>
+          <span class="font-display uppercase text-[clamp(1.8rem,5.5vw,4.5rem)] leading-none group-hover:translate-x-2 transition-transform duration-300">Digital & Motion</span>
+        </div>
+        <span class="plus shrink-0 w-10 h-10 md:w-12 md:h-12 border-2 border-ink rounded-full flex items-center justify-center">
+          <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        </span>
+      </button>
+      <div class="svc-body"><div>
+        <div class="pb-9 md:pb-12 md:pl-16 grid md:grid-cols-2 gap-6">
+          <p class="text-ink/70 leading-relaxed max-w-md">Web design, social kits and motion identities that translate your brand to screens without losing its punch.</p>
+          <ul class="flex flex-wrap gap-2 content-start md:justify-end">
+            <li class="font-mono text-[10px] tracking-widest border-2 border-ink rounded-full px-4 py-1.5 hover:bg-ink hover:text-paper transition-colors">WEB DESIGN</li>
+            <li class="font-mono text-[10px] tracking-widest border-2 border-ink rounded-full px-4 py-1.5 hover:bg-ink hover:text-paper transition-colors">SOCIAL KITS</li>
+            <li class="font-mono text-[10px] tracking-widest border-2 border-ink rounded-full px-4 py-1.5 hover:bg-ink hover:text-paper transition-colors">MOTION IDENTITY</li>
+            <li class="font-mono text-[10px] tracking-widest border-2 border-ink rounded-full px-4 py-1.5 hover:bg-ink hover:text-paper transition-colors">CAMPAIGNS</li>
+          </ul>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ PLAYGROUND ============ -->
+<section id="playground" class="bg-ink text-paper py-24 md:py-32 overflow-hidden">
+  <div class="px-5 md:px-10 flex flex-wrap items-end justify-between gap-6 rv">
+    <div>
+      <div class="flex items-center gap-3 font-mono text-[10px] md:text-xs tracking-[0.25em]">
+        <span class="w-2.5 h-2.5 bg-lime inline-block"></span>PLAYGROUND — 04
+      </div>
+      <h2 class="mt-6 font-display uppercase leading-[0.85] text-[clamp(3rem,9vw,8.5rem)]">Off the <span class="stroke-hero">clock</span></h2>
+    </div>
+    <p class="font-mono text-xs text-paper/50 text-right leading-relaxed">(POSTERS, TYPE SKETCHES & 3D PLAY)<br>HOVER TO COLORIZE ✦</p>
+  </div>
+
+  <div class="mt-12 md:mt-16 marquee marquee-imgs">
+    <div class="marquee-track gap-6 pr-6">
+      <figure class="group relative shrink-0 w-60 md:w-80 border border-white/15 overflow-hidden"><img src="https://picsum.photos/seed/play1/640/480?grayscale" alt="Experiment 1" class="img-g w-full aspect-[4/3] object-cover group-hover:scale-105"><figcaption class="absolute top-3 left-3 font-mono text-[9px] tracking-widest bg-ink/80 text-paper px-2 py-1 border border-white/20">TYPE-01</figcaption></figure>
+      <figure class="group relative shrink-0 w-60 md:w-80 border border-white/15 overflow-hidden"><img src="https://picsum.photos/seed/play2/640/480?grayscale" alt="Experiment 2" class="img-g w-full aspect-[4/3] object-cover group-hover:scale-105"><figcaption class="absolute top-3 left-3 font-mono text-[9px] tracking-widest bg-ink/80 text-paper px-2 py-1 border border-white/20">POSTER-14</figcaption></figure>
+      <figure class="group relative shrink-0 w-60 md:w-80 border border-white/15 overflow-hidden"><img src="https://picsum.photos/seed/play3/640/480?grayscale" alt="Experiment 3" class="img-g w-full aspect-[4/3] object-cover group-hover:scale-105"><figcaption class="absolute top-3 left-3 font-mono text-[9px] tracking-widest bg-ink/80 text-paper px-2 py-1 border border-white/20">GRID-07</figcaption></figure>
+      <figure class="group relative shrink-0 w-60 md:w-80 border border-white/15 overflow-hidden"><img src="https://picsum.photos/seed/play4/640/480?grayscale" alt="Experiment 4" class="img-g w-full aspect-[4/3] object-cover group-hover:scale-105"><figcaption class="absolute top-3 left-3 font-mono text-[9px] tracking-widest bg-ink/80 text-paper px-2 py-1 border border-white/20">3D-03</figcaption></figure>
+      <figure class="group relative shrink-0 w-60 md:w-80 border border-white/15 overflow-hidden"><img src="https://picsum.photos/seed/play5/640/480?grayscale" alt="Experiment 5" class="img-g w-full aspect-[4/3] object-cover group-hover:scale-105"><figcaption class="absolute top-3 left-3 font-mono text-[9px] tracking-widest bg-ink/80 text-paper px-2 py-1 border border-white/20">TYPE-09</figcaption></figure>
+      <figure class="group relative shrink-0 w-60 md:w-80 border border-white/15 overflow-hidden"><img src="https://picsum.photos/seed/play6/640/480?grayscale" alt="Experiment 6" class="img-g w-full aspect-[4/3] object-cover group-hover:scale-105"><figcaption class="absolute top-3 left-3 font-mono text-[9px] tracking-widest bg-ink/80 text-paper px-2 py-1 border border-white/20">POSTER-22</figcaption></figure>
+      <figure class="group relative shrink-0 w-60 md:w-80 border border-white/15 overflow-hidden"><img src="https://picsum.photos/seed/play7/640/480?grayscale" alt="Experiment 7" class="img-g w-full aspect-[4/3] object-cover group-hover:scale-105"><figcaption class="absolute top-3 left-3 font-mono text-[9px] tracking-widest bg-ink/80 text-paper px-2 py-1 border border-white/20">RISO-05</figcaption></figure>
+      <figure class="group relative shrink-0 w-60 md:w-80 border border-white/15 overflow-hidden"><img src="https://picsum.photos/seed/play8/640/480?grayscale" alt="Experiment 8" class="img-g w-full aspect-[4/3] object-cover group-hover:scale-105"><figcaption class="absolute top-3 left-3 font-mono text-[9px] tracking-widest bg-ink/80 text-paper px-2 py-1 border border-white/20">LOGO-31</figcaption></figure>
+    </div>
+    <div class="marquee-track gap-6 pr-6" aria-hidden="true">
+      <figure class="group relative shrink-0 w-60 md:w-80 border border-white/15 overflow-hidden"><img src="https://picsum.photos/seed/play1/640/480?grayscale" alt="" class="img-g w-full aspect-[4/3] object-cover group-hover:scale-105"><figcaption class="absolute top-3 left-3 font-mono text-[9px] tracking-widest bg-ink/80 text-paper px-2 py-1 border border-white/20">TYPE-01</figcaption></figure>
+      <figure class="group relative shrink-0 w-60 md:w-80 border border-white/15 overflow-hidden"><img src="https://picsum.photos/seed/play2/640/480?grayscale" alt="" class="img-g w-full aspect-[4/3] object-cover group-hover:scale-105"><figcaption class="absolute top-3 left-3 font-mono text-[9px] tracking-widest bg-ink/80 text-paper px-2 py-1 border border-white/20">POSTER-14</figcaption></figure>
+      <figure class="group relative shrink-0 w-60 md:w-80 border border-white/15 overflow-hidden"><img src="https://picsum.photos/seed/play3/640/480?grayscale" alt="" class="img-g w-full aspect-[4/3] object-cover group-hover:scale-105"><figcaption class="absolute top-3 left-3 font-mono text-[9px] tracking-widest bg-ink/80 text-paper px-2 py-1 border border-white/20">GRID-07</figcaption></figure>
+      <figure class="group relative shrink-0 w-60 md:w-80 border border-white/15 overflow-hidden"><img src="https://picsum.photos/seed/play4/640/480?grayscale" alt="" class="img-g w-full aspect-[4/3] object-cover group-hover:scale-105"><figcaption class="absolute top-3 left-3 font-mono text-[9px] tracking-widest bg-ink/80 text-paper px-2 py-1 border border-white/20">3D-03</figcaption></figure>
+      <figure class="group relative shrink-0 w-60 md:w-80 border border-white/15 overflow-hidden"><img src="https://picsum.photos/seed/play5/640/480?grayscale" alt="" class="img-g w-full aspect-[4/3] object-cover group-hover:scale-105"><figcaption class="absolute top-3 left-3 font-mono text-[9px] tracking-widest bg-ink/80 text-paper px-2 py-1 border border-white/20">TYPE-09</figcaption></figure>
+      <figure class="group relative shrink-0 w-60 md:w-80 border border-white/15 overflow-hidden"><img src="https://picsum.photos/seed/play6/640/480?grayscale" alt="" class="img-g w-full aspect-[4/3] object-cover group-hover:scale-105"><figcaption class="absolute top-3 left-3 font-mono text-[9px] tracking-widest bg-ink/80 text-paper px-2 py-1 border border-white/20">POSTER-22</figcaption></figure>
+      <figure class="group relative shrink-0 w-60 md:w-80 border border-white/15 overflow-hidden"><img src="https://picsum.photos/seed/play7/640/480?grayscale" alt="" class="img-g w-full aspect-[4/3] object-cover group-hover:scale-105"><figcaption class="absolute top-3 left-3 font-mono text-[9px] tracking-widest bg-ink/80 text-paper px-2 py-1 border border-white/20">RISO-05</figcaption></figure>
+      <figure class="group relative shrink-0 w-60 md:w-80 border border-white/15 overflow-hidden"><img src="https://picsum.photos/seed/play8/640/480?grayscale" alt="" class="img-g w-full aspect-[4/3] object-cover group-hover:scale-105"><figcaption class="absolute top-3 left-3 font-mono text-[9px] tracking-widest bg-ink/80 text-paper px-2 py-1 border border-white/20">LOGO-31</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============ RECOGNITION ============ -->
+<section id="recognition" class="bg-paper text-ink px-5 md:px-10 py-24 md:py-32">
+  <div class="flex items-center gap-3 font-mono text-[10px] md:text-xs tracking-[0.25em] rv">
+    <span class="w-2.5 h-2.5 bg-punch inline-block"></span>RECOGNITION — 05
+  </div>
+  <h2 class="mt-8 font-display uppercase leading-[0.9] text-[clamp(2.6rem,8vw,7rem)] rv" style="transition-delay:.1s">Press & Awards</h2>
+
+  <div class="mt-12 rv" style="transition-delay:.15s">
+    <div class="group flex items-center justify-between gap-4 border-t border-ink/20 py-5 md:py-6 transition-all duration-300 hover:bg-ink hover:text-paper hover:px-4">
+      <span class="font-display uppercase text-xl md:text-3xl">Awwwards</span>
+      <span class="font-mono text-[10px] md:text-xs text-ink/50 group-hover:text-paper/60 hidden sm:block tracking-widest">SITE OF THE DAY ×3</span>
+      <span class="font-mono text-xs group-hover:text-lime">2024</span>
+    </div>
+    <div class="group flex items-center justify-between gap-4 border-t border-ink/20 py-5 md:py-6 transition-all duration-300 hover:bg-ink hover:text-paper hover:px-4">
+      <span class="font-display uppercase text-xl md:text-3xl">D&AD</span>
+      <span class="font-mono text-[10px] md:text-xs text-ink/50 group-hover:text-paper/60 hidden sm:block tracking-widest">WOOD PENCIL — IDENTITY</span>
+      <span class="font-mono text-xs group-hover:text-lime">2024</span>
+    </div>
+    <div class="group flex items-center justify-between gap-4 border-t border-ink/20 py-5 md:py-6 transition-all duration-300 hover:bg-ink hover:text-paper hover:px-4">
+      <span class="font-display uppercase text-xl md:text-3xl">Type Directors Club</span>
+      <span class="font-mono text-[10px] md:text-xs text-ink/50 group-hover:text-paper/60 hidden sm:block tracking-widest">CERTIFICATE OF EXCELLENCE</span>
+      <span class="font-mono text-xs group-hover:text-lime">2023</span>
+    </div>
+    <div class="group flex items-center justify-between gap-4 border-t border-ink/20 py-5 md:py-6 transition-all duration-300 hover:bg-ink hover:text-paper hover:px-4">
+      <span class="font-display uppercase text-xl md:text-3xl">ADC Europe</span>
+      <span class="font-mono text-[10px] md:text-xs text-ink/50 group-hover:text-paper/60 hidden sm:block tracking-widest">GOLD — PACKAGING</span>
+      <span class="font-mono text-xs group-hover:text-lime">2023</span>
+    </div>
+    <div class="group flex items-center justify-between gap-4 border-t border-b border-ink/20 py-5 md:py-6 transition-all duration-300 hover:bg-ink hover:text-paper hover:px-4">
+      <span class="font-display uppercase text-xl md:text-3xl">Behance</span>
+      <span class="font-mono text-[10px] md:text-xs text-ink/50 group-hover:text-paper/60 hidden sm:block tracking-widest">FEATURED — GRAPHIC DESIGN</span>
+      <span class="font-mono text-xs group-hover:text-lime">2022</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER / CONTACT ============ -->
+<footer id="contact" class="relative bg-ink text-paper px-5 md:px-10 pt-24 md:pt-36 pb-6 overflow-hidden">
+  <div class="font-mono text-[10px] md:text-xs tracking-[0.25em] text-white/50 rv">(GOT A PROJECT IN MIND? — 06)</div>
+
+  <a href="mailto:hello@maravoss.studio" data-hover class="group block mt-6 rv" style="transition-delay:.1s">
+    <span class="font-display uppercase leading-[0.85] text-[clamp(3.6rem,13vw,13rem)] block group-hover:text-lime group-hover:translate-x-4 transition-all duration-300">
+      Let's talk
+      <svg viewBox="0 0 24 24" class="inline-block w-[0.55em] h-[0.55em] align-baseline transition-transform duration-300 group-hover:rotate-45" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M8 7h9v9"/></svg>
+    </span>
+  </a>
+
+  <button id="copyEmail" data-hover class="magnetic mt-10 md:mt-14 inline-flex items-center gap-3 border-2 border-paper/30 rounded-full px-6 md:px-8 py-3 md:py-4 font-mono text-xs md:text-sm tracking-wider hover:border-lime hover:text-lime transition-colors">
+    hello@maravoss.studio
+    <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg>
+  </button>
+
+  <div class="mt-20 md:mt-28 grid grid-cols-2 md:grid-cols-4 gap-10 border-t border-white/10 pt-10">
+    <div>
+      <h4 class="font-mono text-[10px] tracking-[0.3em] text-white/40">MENU</h4>
+      <ul class="mt-4 space-y-2 font-mono text-sm">
+        <li><a href="#work" class="u-link" data-hover>Work</a></li>
+        <li><a href="#about" class="u-link" data-hover>About</a></li>
+        <li><a href="#services" class="u-link" data-hover>Services</a></li>
+        <li><a href="#playground" class="u-link" data-hover>Playground</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="font-mono text-[10px] tracking-[0.3em] text-white/40">SOCIALS</h4>
+      <ul class="mt-4 space-y-2 font-mono text-sm">
+        <li><a href="#" class="u-link inline-flex items-center gap-1" data-hover>Instagram ↗</a></li>
+        <li><a href="#" class="u-link inline-flex items-center gap-1" data-hover>Behance ↗</a></li>
+        <li><a href="#" class="u-link inline-flex items-center gap-1" data-hover>Dribbble ↗</a></li>
+        <li><a href="#" class="u-link inline-flex items-center gap-1" data-hover>LinkedIn ↗</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="font-mono text-[10px] tracking-[0.3em] text-white/40">STUDIO</h4>
+      <p class="mt-4 font-mono text-sm text-white/70 leading-relaxed">Torstraße 101<br>10119 Berlin, DE</p>
+    </div>
+    <div>
+      <h4 class="font-mono text-[10px] tracking-[0.3em] text-white/40">LOCAL TIME</h4>
+      <p class="mt-4 font-display text-2xl md:text-3xl"><span id="clock">--:--:--</span> <span class="text-lime text-sm align-middle">CET</span></p>
+    </div>
+  </div>
+
+  <div class="mt-14 flex flex-wrap items-center justify-between gap-4 font-mono text-[10px] tracking-widest text-white/40">
+    <span>©2025 MARA VOSS — ALL RIGHTS RESERVED</span>
+    <span class="hidden md:inline">DESIGNED & BUILT WITH RAGE & COFFEE</span>
+    <a href="#top" data-hover class="u-link text-white/70 hover:text-lime transition-colors">BACK TO TOP ↑</a>
+  </div>
+
+  <!-- giant clipped wordmark -->
+  <div class="pointer-events-none select-none font-display uppercase text-center text-[19vw] leading-[0.72] translate-y-[26%] stroke-footer opacity-50" aria-hidden="true">Mara Voss</div>
+</footer>
+
+<script>
+const $  = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+const fine = window.matchMedia('(pointer:fine)').matches;
+
+/* ============ PROJECT DATA ============ */
+const projects = [
+  { title:'Noir Studio',    cat:'BRAND IDENTITY',    year:'2025', img:'https://picsum.photos/seed/noirstudio/1200/900?grayscale',   desc:'A monochrome identity and design system for a Berlin architecture studio — built on brutal grids and one very loud typeface.' },
+  { title:'Pulse Festival', cat:'ART DIRECTION',     year:'2024', img:'https://picsum.photos/seed/pulsefest/1200/900?grayscale',    desc:'Full campaign world for an electronic music festival: posters, motion, stage visuals — 120k visitors, zero compromises.' },
+  { title:'Kiosk Magazine', cat:'EDITORIAL DESIGN',  year:'2024', img:'https://picsum.photos/seed/kioskmag/1200/900?grayscale',     desc:'Art direction and grid system for an independent print magazine on visual culture. Twelve issues and counting.' },
+  { title:'Volt Espresso',  cat:'PACKAGING',         year:'2023', img:'https://picsum.photos/seed/voltespresso/1200/900?grayscale', desc:'Packaging system for a specialty coffee roaster — electric accents, honest materials, shelves that hum.' },
+  { title:'Atlas Type Co.', cat:'TYPE DESIGN',       year:'2023', img:'https://picsum.photos/seed/atlastype/1200/900?grayscale',   desc:'A custom display typeface in 9 weights, drawn for headlines that refuse to whisper.' },
+  { title:'Mono Supply',    cat:'BRANDING / E-COMM', year:'2022', img:'https://picsum.photos/seed/monosupply/1200/900?grayscale',  desc:'Identity, web design and art direction for a minimalist gear label out of Copenhagen.' },
+];
+
+/* ============ PRELOADER ============ */
+const loader = $('#loader'), loadNum = $('#loadNum'), loadBar = $('#loadBar');
+let progress = 0;
+const tick = setInterval(() => {
+  progress += Math.random() * 14 + 6;
+  if (progress >= 100) {
+    progress = 100; clearInterval(tick);
+    setTimeout(() => {
+      loader.classList.add('done');
+      document.body.classList.remove('loading');
+      document.body.classList.add('loaded');
+      setTimeout(() => loader.remove(), 1000);
+    }, 350);
+  }
+  loadNum.innerHTML = Math.floor(progress) + '<span class="text-lime">%</span>';
+  loadBar.style.width = progress + '%';
+}, 90);
+
+/* ============ SPLIT HEADLINE INTO CHARS ============ */
+$$('[data-split]').forEach(el => {
+  const txt = el.textContent; el.textContent = '';
+  [...txt].forEach((ch, i) => {
+    const s = document.createElement('span');
+    s.className = 'hero-char';
+    s.textContent = ch === ' ' ? '\u00A0' : ch;
+    s.style.transitionDelay = (0.15 + i * 0.05) + 's';
+    el.appendChild(s);
+  });
+});
+
+/* ============ CUSTOM CURSOR ============ */
+const cursor = $('#cursor');
+if (fine) {
+  let cx = innerWidth/2, cy = innerHeight/2, px = cx, py = cy;
+  addEventListener('mousemove', e => { cx = e.clientX; cy = e.clientY; cursor.classList.add('on'); });
+  (function move(){
+    px += (cx - px) * .28; py += (cy - py) * .28;
+    cursor.style.transform = `translate(${px}px,${py}px) translate(-50%,-50%)`;
+    requestAnimationFrame(move);
+  })();
+  document.addEventListener('mouseover', e => {
+    const view = e.target.closest('.work-row');
+    const grow = e.target.closest('a,button,[data-hover]');
+    cursor.classList.toggle('view', !!view);
+    cursor.classList.toggle('grow', !view && !!grow);
+  });
+}
+
+/* ============ FLOATING WORK PREVIEW ============ */
+const preview = $('#preview'), pImg = $('#previewImg');
+if (fine) {
+  let tx = 0, ty = 0, x = 0, y = 0, rot = 0, visible = false;
+  addEventListener('mousemove', e => { tx = e.clientX; ty = e.clientY; });
+  (function raf(){
+    const dx = tx - x;
+    x += dx * .11; y += (ty - y) * .11;
+    rot += (Math.max(-14, Math.min(14, dx * .08)) - rot) * .08;
+    preview.style.transform = `translate(${x}px,${y}px) translate(-50%,-58%) rotate(${rot}deg) scale(${visible ? 1 : .7})`;
+    requestAnimationFrame(raf);
+  })();
+  $$('.work-row').forEach(row => {
+    row.addEventListener('mouseenter', () => {
+      pImg.src = projects[+row.dataset.index].img;
+      visible = true; preview.style.opacity = '1';
+    });
+    row.addEventListener('mouseleave', () => { visible = false; preview.style.opacity = '0'; });
+  });
+}
+
+/* ============ CASE LIGHTBOX ============ */
+const lb = $('#lightbox'), lbImg = $('#lbImg'), lbTitle = $('#lbTitle'), lbMeta = $('#lbMeta'), lbDesc = $('#lbDesc');
+function openLb(i){
+  const p = projects[i];
+  lbImg.src = p.img; lbTitle.textContent = p.title;
+  lbMeta.textContent = `${p.cat} — ${p.year}`; lbDesc.textContent = p.desc;
+  lb.classList.add('open'); document.body.style.overflow = 'hidden';
+}
+function closeLb(){ lb.classList.remove('open'); document.body.style.overflow = ''; }
+$$('.work-row').forEach(row => row.addEventListener('click', e => { e.preventDefault(); openLb(+row.dataset.index); }));
+$$('#lightbox [data-close]').forEach(el => el.addEventListener('click', closeLb));
+
+/* ============ MOBILE MENU ============ */
+const menu = $('#menu');
+const openMenu  = () => { menu.classList.add('open'); document.body.style.overflow = 'hidden'; };
+const closeMenu = () => { menu.classList.remove('open'); document.body.style.overflow = ''; };
+$('#menuBtn').addEventListener('click', openMenu);
+$('#menuClose').addEventListener('click', closeMenu);
+$$('#menu a[href^="#"]').forEach(a => a.addEventListener('click', closeMenu));
+addEventListener('keydown', e => { if (e.key === 'Escape') { closeLb(); closeMenu(); } });
+
+/* ============ SCROLL REVEALS ============ */
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+}, { threshold: .12 });
+$$('.rv').forEach(el => io.observe(el));
+
+/* ============ ABOUT WORD-FILL ON SCROLL ============ */
+const para = $('#fillPara');
+const words = para.textContent.trim().split(/\s+/);
+para.innerHTML = words.map(w => `<span class="wf">${w}</span>`).join(' ');
+const wfSpans = [...para.querySelectorAll('.wf')];
+function fill(){
+  const r = para.getBoundingClientRect();
+  const start = innerHeight * .85, end = innerHeight * .25;
+  const p = Math.min(1, Math.max(0, (start - r.top) / ((start - end) + r.height * .9)));
+  const n = Math.floor(p * wfSpans.length);
+  wfSpans.forEach((s, i) => s.classList.toggle('on', i < n));
+}
+addEventListener('scroll', fill, { passive:true }); fill();
+
+/* ============ STAT COUNTERS ============ */
+const cio = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    cio.unobserve(e.target);
+    const el = e.target, target = +el.dataset.count, suf = el.dataset.suffix || '';
+    const t0 = performance.now(), dur = 1400;
+    (function step(t){
+      const p = Math.min(1, (t - t0) / dur), ease = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(target * ease) + suf;
+      if (p < 1) requestAnimationFrame(step);
+    })(t0);
+  });
+}, { threshold: .5 });
+$$('.stat-num').forEach(el => cio.observe(el));
+
+/* ============ SERVICES ACCORDION ============ */
+$$('.svc .head').forEach(h => h.addEventListener('click', () => {
+  const svc = h.parentElement, wasOpen = svc.classList.contains('open');
+  $$('.svc').forEach(s => s.classList.remove('open'));
+  if (!wasOpen) svc.classList.add('open');
+}));
+
+/* ============ LOCAL TIME CLOCK ============ */
+const clock = $('#clock');
+setInterval(() => {
+  clock.textContent = new Date().toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+}, 1000);
+
+/* ============ MAGNETIC ELEMENTS ============ */
+if (fine) {
+  $$('.magnetic').forEach(el => {
+    el.addEventListener('mousemove', e => {
+      const r = el.getBoundingClientRect();
+      el.style.transform = `translate(${(e.clientX - r.left - r.width/2) * .3}px, ${(e.clientY - r.top - r.height/2) * .4}px)`;
+    });
+    el.addEventListener('mouseleave', () => { el.style.transform = ''; });
+  });
+}
+
+/* ============ COPY EMAIL + TOAST ============ */
+let toastT;
+$('#copyEmail').addEventListener('click', () => {
+  const email = 'hello@maravoss.studio';
+  if (navigator.clipboard) navigator.clipboard.writeText(email).catch(() => {});
+  const toast = $('#toast');
+  toast.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => toast.classList.remove('show'), 2200);
+});
+</script>
+
+</body>
+</html>
+```
